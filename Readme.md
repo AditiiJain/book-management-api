@@ -1,17 +1,35 @@
-Requirements
+##Requirements
 
-=> We are a company that handles publications
+######We are a company that handles publications
 
-# Book
+* Book
    ISBN, Title, Author [], Language, Publication Date, Number of Pages, Category
 
-# Authors
+* Authors
     Name, Id, Books[]
 
-# Publications
+* Publications
     Name, Id, Books[]   
 
 ------------------------------------------------------------------------------------------------------------------- 
 
-# Books
+## Books
+We need an API
+* to get all books
+* to get specific book
+* to get a list of books based on catergory
+* to get a list of books bades on author
+
+## Author
+We need an API
+* to get all authors
+* to get specific author
+* to get a list of authors based on a book
+
+## Publication
+We need and API
+* to get all publications
+* to get specific publication
+* to get a list of publications based on a book
+
 
