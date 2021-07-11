@@ -1,6 +1,6 @@
-##Requirements
+# Requirements
 
-######We are a company that handles publications
+###### We are a company that handles publications
 
 * Book
    ISBN, Title, Author [], Language, Publication Date, Number of Pages, Category
