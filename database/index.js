@@ -1,3 +1,5 @@
+//creating our own module
+//if we are creating our own module then we have to export the content so that it can be available outside the file also.
 const books = [
   {
     ISBN: "12345ONE",
@@ -6,8 +8,8 @@ const books = [
     language: "en",
     pubDate: "2021-07-08",
     numOfPages: 500,
-    catergory: ["web developement", "programming", "tech"],
-    publications: [1],
+    category: ["web developement", "programming", "tech"],
+    publications: [1,2],
   },
   {
     ISBN: "12345TWO",
@@ -16,7 +18,7 @@ const books = [
     language: "en",
     pubDate: "2020-07-08",
     numOfPages: 550,
-    catergory: ["DSA", "programming", "tech"],
+    category: ["DSA", "programming", "tech"],
     publications: [1],
   },
 ];
@@ -45,4 +47,11 @@ const publications = [
     pubName: "navbharat publications",
     books: ["12345ONE", "12345TWO"],
   },
+  {
+    pubID: "2",
+    pubName: "nav publications",
+    books: ["12345ONE"],
+  },
 ];
+
+module.exports = {books,authors,publications}
