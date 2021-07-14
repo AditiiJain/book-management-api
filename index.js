@@ -169,5 +169,44 @@ app.get("/publications/bookID/:id", (req, res) => {
   return res.json({ publication: getPublication });
 });
 
+/*
+Route      :  /books/new
+Description:  to add a new book
+Access     :  PUBLIC
+Parameters :  NONE
+Method     :  POST
+*/
+app.post("/books/new", (req, res) => {
+  const newBook = req.body.newBook;
+  database.books.push(newBook)
+  return res.json({ books:database.books , message :"book was added!" });
+});
+
+/*
+Route      :  /author/new
+Description:  to add a new author
+Access     :  PUBLIC
+Parameters :  NONE
+Method     :  POST
+*/
+app.post("/author/new", (req, res) => {
+  const newAuthor = req.body.newAuthor; //body.<keyvalue>
+  database.authors.push(newAuthor)
+  return res.json({ authors:database.authors , message :"author was added!" });
+});
+
+/*
+Route      :  /publication/new
+Description:  to add a new publication
+Access     :  PUBLIC
+Parameters :  NONE
+Method     :  POST
+*/
+app.post("/publication/new", (req, res) => {
+  const newPublication = req.body.newPublication; //body.<keyvalue>
+  database.publications.push(newPublication)
+  return res.json({ publications:database.publications , message :"publication was added!" });
+});
+
 //port
 app.listen(5000, () => console.log("Server running!!"));
