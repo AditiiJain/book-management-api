@@ -42,7 +42,7 @@ We need an API
 #### POST
 * new author
 #### PUT 
-* author details
+* to update author details
 #### DELETE
 * delete an author
 
