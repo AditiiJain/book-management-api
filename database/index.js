@@ -1,6 +1,6 @@
 //creating our own module
 //if we are creating our own module then we have to export the content so that it can be available outside the file also.
-const books = [
+let books = [
   {
     ISBN: "12345ONE",
     title: "Getting started with MERN",
@@ -41,7 +41,7 @@ const authors = [
   },
 ];
 
-const publications = [
+let publications = [
   {
     pubID: "1",
     pubName: "navbharat publications",

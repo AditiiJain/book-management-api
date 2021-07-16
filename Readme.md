@@ -3,7 +3,7 @@
 #### We are a company that handles publications
 
 * Book
-   ISBN, Title, Author [], Language, Publication Date, Number of Pages, Category[], Publications
+   ISBN, Title, Author [], Language, Publication Date, Number of Pages, Category[], Publications[]
 
 * Authors
     Name, Id, Books[]
@@ -44,7 +44,7 @@ We need an API
 #### PUT 
 * to update author details
 #### DELETE
-* delete an author
+* delete an author from database
 
 # <u>Publication</u>
 We need and API
@@ -59,7 +59,7 @@ We need and API
 * update/add new book to a publication
 #### DELETE
 * delete a book from publication
-* delete publication
+* delete publication from database
 
 
 

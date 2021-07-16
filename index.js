@@ -312,19 +312,170 @@ app.put("/publications/update/book/:isbn", (req, res) => {
   //update books database
   database.books.forEach((book) => {
     if (book.ISBN === req.params.isbn) {
-       return book.publications.push(req.body.newPublication);
+      return book.publications.push(req.body.newPublication);
     }
   });
   //update publications database
   database.publications.forEach((publication) => {
     if (parseInt(publication.pubID) === req.body.newPublication) {
-       return publication.books.push(req.params.isbn);
+      return publication.books.push(req.params.isbn);
     }
   });
   return res.json({
-    books:database.books,
+    books: database.books,
     publications: database.publications,
     message: "publication updated!",
+  });
+});
+
+/*
+Route      :  /book/delete
+Description:  delete a book
+Access     :  PUBLIC
+Parameters :  isbn
+Method     :  DELETE
+*/
+app.delete("/book/delete/:isbn", (req, res) => {
+  //update book database
+  const updateBookDatabase = database.books.filter((book) => {
+    return book.ISBN !== req.params.isbn;
+  });
+  database.books = updateBookDatabase;
+  //update author database
+  database.authors.forEach((author) => {
+    const newBookList = author.books.filter((book) => {
+      return req.params.isbn !== book;
+    });
+    author.books = newBookList;
+  });
+  return res.json({
+    books: database.books,
+    authors: database.authors,
+  });
+});
+
+/*
+Route      :  /book/delete/author
+Description:  delete an author from a book
+Access     :  PUBLIC
+Parameters :  isbn, authorID
+Method     :  DELETE
+*/
+app.delete("/book/delete/author/:isbn/:authorID", (req, res) => {
+  //update book database
+  database.books.forEach((book) => {
+    if (book.ISBN === req.params.isbn) {
+      const newAuthorList = book.authors.filter((author) => {
+        return parseInt(req.params.authorID) !== author;
+      });
+      book.authors = newAuthorList;
+      return;
+    }
+  });
+  //update author database
+  database.authors.forEach((author) => {
+    if (req.params.authorID === author.authorID) {
+      const newBookList = author.books.filter((book) => {
+        return book !== req.params.isbn;
+      });
+      author.books = newBookList;
+      return;
+    }
+  });
+  return res.json({
+    message: "Author deleted from the book.",
+    books: database.books,
+    authors: database.authors,
+  });
+});
+
+/*
+Route      :  /author/delete
+Description:  delete an author from database
+Access     :  PUBLIC
+Parameters :  authorID
+Method     :  DELETE
+*/
+app.delete("/author/delete/:authorID", (req, res) => {
+  //update author database
+  const updateAuthorDatabase = database.authors.filter(
+    (author) => req.params.authorID !== author.authorID
+  );
+  database.authors = updateAuthorDatabase;
+  //update book database
+  database.books.forEach((book) => {
+    const updateBookDatabase = book.authors.filter(
+      (author) => parseInt(req.params.authorID) !== author
+    );
+    book.authors = updateBookDatabase;
+  });
+  return res.json({
+    message: "Author deleted from database.",
+    books: database.books,
+    authors: database.authors,
+  });
+});
+
+/*
+Route      :  /publication/delete
+Description:  delete a publication from database
+Access     :  PUBLIC
+Parameters :  pubID
+Method     :  DELETE
+*/
+app.delete("/publication/delete/:pubID", (req, res) => {
+  //update publication database
+  const updatePublicationDatabase = database.publications.filter(
+    (publication) => req.params.pubID !== publication.pubID
+  );
+  database.publications = updatePublicationDatabase;
+  //update book database
+  database.books.forEach((book) => {
+    const updateBookDatabase = book.publications.filter(
+      (publication) => parseInt(req.params.pubID) !== publication
+    );
+    book.publications = updateBookDatabase;
+  });
+  return res.json({
+    message: "Publication deleted from database.",
+    books: database.books,
+    publications: database.publications,
+  });
+});
+
+/*
+Route      :  /publication/delete/book
+Description:  delete a book from publication
+Access     :  PUBLIC
+Parameters :  isbn,pubID
+Method     :  DELETE
+*/
+app.delete("/publication/delete/book/:isbn/:pubID", (req, res) => {
+  //update publication database
+  database.publications.forEach((publication) => {
+    console.log(publication.pubID === req.params.pubID);
+    if (publication.pubID === req.params.pubID) {
+      const newBookList = publication.books.filter((book) => {
+        return req.params.isbn !== book;
+      });
+     publication.books = newBookList;
+      return;
+    }
+  });
+  //update book database
+  database.books.forEach((book) => {
+    if (req.params.isbn === book.ISBN) {
+      const newPublicationList = book.publications.filter((publication) => {
+        return publication !== parseInt(req.params.pubID);
+      });
+      book.publications = newPublicationList;
+      return;
+    }
+  });
+  return res.json({
+    message: "Book deleted from the publication.",
+    books: database.books,
+    publications: database.publications,
   });
 });
 
