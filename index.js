@@ -1,6 +1,7 @@
+require("dotenv").config();
 //importing express framework
-const { request, response } = require("express");
 const express = require("express");
+const mongoose = require("mongoose")
 
 //including our own module ->database
 const database = require("./database/index");
@@ -10,6 +11,14 @@ const app = express();
 
 // configurations -- server to use json data format
 app.use(express.json());
+
+//establish database connection
+mongoose.connect(process.env.MONGO_URL,{
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+}).then(()=> console.log("connection  established!"));
 
 /*
 Route      :  /
