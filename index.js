@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config();  //for security purpose
 //importing express framework
 const express = require("express");
 const mongoose = require("mongoose")
