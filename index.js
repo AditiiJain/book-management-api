@@ -372,7 +372,7 @@ app.put("/publications/update/book/:isbn", async (req, res) => {
       return res.json({
         books: updatebook,
         publications: updatePublication,
-        message: "new publication was added to a book!",
+        message: "added new book to the publication!",
       });
     }
 
@@ -435,30 +435,63 @@ Method     :  DELETE
 app.delete("/book/delete/author/:isbn/:authorID", async (req, res) => {
   //update book database
   const updateBookDatabase = await BookModel.findOne({ ISBN: req.params.isbn });
-
   //update author database
   if (updateBookDatabase) {
-    const updateAuthor = updateBookDatabase.authors.filter((author) => {
-      return author !== parseInt(req.params.authorID);
-    });
-    updateBookDatabase.authors = updateAuthor;
-    await updateBookDatabase.save();
-    const updateAuthorDatabase = await AuthorModel.find();
-    updateAuthorDatabase.forEach(async (author) => {
-      const updateBook = author.books.filter((book) => {
+    if (updateBookDatabase.authors.includes(parseInt(req.params.authorID))) {
+      const updateAuthor = updateBookDatabase.authors.filter((author) => {
+        return author !== parseInt(req.params.authorID);
+      });
+      updateBookDatabase.authors = updateAuthor;
+      await updateBookDatabase.save();
+
+      const updateAuthorDatabase = await AuthorModel.findOne({
+        authorID: req.params.authorID,
+      });
+      const updateBook = updateAuthorDatabase.books.filter((book) => {
         return book !== req.params.isbn;
       });
-      author.books = updateBook;
-      await author.save();
-    });
+      updateAuthorDatabase.books = updateBook;
+      await updateAuthorDatabase.save();
+
+      return res.json({
+        message: "Author deleted from the book.",
+        books: updateBookDatabase,
+        authors: updateAuthorDatabase,
+      });
+    }
     return res.json({
-      message: "Author deleted from the book.",
-      books: updateBookDatabase,
-      auhthors: updateAuthorDatabase,
+      error: `Author with authorID ${req.params.authorID} not found!`,
     });
   }
   return res.json({ error: `Book with ISBN ${req.params.isbn} not found!` });
 });
+
+// //update book database
+// const updateBookDatabase = await BookModel.findOne({ ISBN: req.params.isbn });
+
+// //update author database
+// if (updateBookDatabase) {
+//   const updateAuthor = updateBookDatabase.authors.filter((author) => {
+//     return author !== parseInt(req.params.authorID);
+//   });
+//   updateBookDatabase.authors = updateAuthor;
+//   await updateBookDatabase.save();
+//   const updateAuthorDatabase = await AuthorModel.find();
+//   updateAuthorDatabase.forEach(async (author) => {
+//     const updateBook = author.books.filter((book) => {
+//       return book !== req.params.isbn;
+//     });
+//     author.books = updateBook;
+//     await author.save();
+//   });
+//   return res.json({
+//     message: "Author deleted from the book.",
+//     books: updateBookDatabase,
+//     auhthors: updateAuthorDatabase,
+//   });
+// }
+// return res.json({ error: `Book with ISBN ${req.params.isbn} not found!` });
+// });
 
 /*
 Route      :  /author/delete
@@ -484,11 +517,13 @@ app.delete("/author/delete/:authorID", async (req, res) => {
     });
     return res.json({
       message: "Author deleted from database.",
-      authors: database.authors,
+      authors: updateAuthorDatabase,
       books: updateBookDatabase,
     });
   }
-  return res.json({ error: `Author with ID ${req.params.isbn} not found!` });
+  return res.json({
+    error: `Author with ID ${req.params.authorID} not found!`,
+  });
 });
 
 /*
@@ -514,7 +549,7 @@ app.delete("/publication/delete/:pubID", async (req, res) => {
       await book.save();
     });
     return res.json({
-      message: "Author deleted from database.",
+      message: "Publication deleted from database.",
       publications: updatePublicationDatabase,
       books: updateBookDatabase,
     });
@@ -531,33 +566,6 @@ Parameters :  isbn,pubID
 Method     :  DELETE
 */
 app.delete("/publication/delete/book/:isbn/:pubID", async (req, res) => {
-  //update publication database
-  // const updatePublicationDatabase = await PublicationModel.findOne({ pubID: req.params.pubID });
-  // //update publication database
-  // if (updatePublicationDatabase) {
-  //   const updateBook = updatePublicationDatabase.books.filter((book) => {
-  //     return book !== req.params.isbn;
-  //   });
-  //   updateBookDatabase.books = updateBook;
-  //   await updatePublicationDatabase.save();
-  //   const updateBookDatabase = await BookModel.find();
-  //   // if(updateBookDatabase.publications.includes(req.params.pubID))
-  //   updateBookDatabase.forEach(async (book) => {
-  //     const updatePublication = book.publications.filter((publication) => {
-  //       return publication !== parseInt(req.params.pubID);
-  //     });
-
-  //     book.publications = updatePublication;
-  //     await book.save();
-  //   });
-  //   return res.json({
-  //     message: "Publication deleted from the book.",
-  //     books: updateBookDatabase,
-  //     publications: updatePublicationDatabase,
-  //   });
-  // }
-  // return res.json({ error: `Publication with pubID ${req.params.pubID} not found!` });
-
   //update book database
   const updateBookDatabase = await BookModel.findOne({ ISBN: req.params.isbn });
   //update publication database
@@ -571,12 +579,15 @@ app.delete("/publication/delete/book/:isbn/:pubID", async (req, res) => {
       updateBookDatabase.publications = updatePublication;
       await updateBookDatabase.save();
 
-      const updatePublicationDatabase = await PublicationModel.findOne({pubID:req.params.pubID});
-      const updateBook =  updatePublicationDatabase.books.filter((book)=> {
-        return book !== req.params.isbn;})
-        updatePublicationDatabase.books = updateBook;
-        await updatePublicationDatabase.save();
-      
+      const updatePublicationDatabase = await PublicationModel.findOne({
+        pubID: req.params.pubID,
+      });
+      const updateBook = updatePublicationDatabase.books.filter((book) => {
+        return book !== req.params.isbn;
+      });
+      updatePublicationDatabase.books = updateBook;
+      await updatePublicationDatabase.save();
+
       return res.json({
         message: "Publication deleted from the book.",
         books: updateBookDatabase,
