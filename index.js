@@ -10,7 +10,7 @@ const database = require("./database/index");
 const BookModel = require("./database/book.js");
 const AuthorModel = require("./database/author.js");
 const PublicationModel = require("./database/publication.js");
-const { findOneAndUpdate } = require("./database/book.js");
+// const { findOneAndUpdate } = require("./database/book.js");
 
 //initializing express
 const app = express();

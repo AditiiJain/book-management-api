@@ -16,50 +16,82 @@
 # <u>Books</u>
 We need an API
 #### GET
-* to get all books
-* to get specific book
-* to get a list of books based on catergory
-* to get a list of books based on author
+| Task                   | endpoint      | 
+| -------------          |:-------------| 
+| to get all books       | / | 
+| to get specific book               |   /book/:isbn    |  
+| to get a list of books based on catergory         | /category/:category      |
+|to get a list of books based on author|/book-authors/:author|   
+
 
 #### POST
-* New book
+| Task       | endpoint          |
+| ------------- |:-------------| 
+| New book      | /books/new | 
+
 
 #### PUT
-* to update book details
-* to update/add new author 
+| Task       | endpoint          |
+| ------------- |:-------------| 
+|to update book title     | /books/update/:isbn | 
+|to update/add new author|/books/author/update/:isbn|
+ 
 
 #### DELETE
-* delete a book
-* delete an author from a book
+| Task       | endpoint          |
+| ------------- |:-------------| 
+|delete a book     | /book/delete/:isbn | 
+|delete an author from a book|/book/delete/author/:isbn/:authorID|
+
 
 # <u>Author</u>
 We need an API
 #### GET
-* to get all authors
-* to get specific author
-* to get a list of authors based on a book
+| Task       | endpoint          |
+| ------------- |:-------------| 
+|to get all authors     | /authors | 
+|to get specific author|/authors/:id|
+|to get a list of authors based on a book|/authors/bookID/:bookID|
 
 #### POST
-* new author
+| Task       | endpoint          |
+| ------------- |:-------------| 
+| New author     | /author/new | 
 #### PUT 
-* to update author details
+| Task       | endpoint          |
+| ------------- |:-------------| 
+|to update author name    | /authors/update/:id | 
+
+
 #### DELETE
-* delete an author from database
+| Task       | endpoint          |
+| ------------- |:-------------| 
+| delete an author from database    | /author/delete/:authorID| 
 
 # <u>Publication</u>
 We need and API
 #### GET
-* to get all publications
-* to get specific publication
-* to get a list of publications based on a book
+| Task       | endpoint          |
+| ------------- |:-------------| 
+|to get all publications     | /publications | 
+|to get specific publication|/publications/:id|
+|to get a list of publications based on a book|/publications/bookID/:isbn|
+
 #### POST
-* add new publication
+| Task       | endpoint          |
+| ------------- |:-------------| 
+| add new publication     | /publication/new | 
 #### PUT
-* update publication details
-* update/add new book to a publication
+| Task       | endpoint          |
+| ------------- |:-------------| 
+|update publication name   | /publications/update/:id | 
+|update/add new book to a publication    | /publications/update/book/:isbn | 
+
 #### DELETE
-* delete a book from publication
-* delete publication from database
+| Task       | endpoint          |
+| ------------- |:-------------| 
+| delete a book from publication   | /publication/delete/book/:isbn/:pubID| 
+| delete publication from database  | /publication/delete/:pubID| 
 
 
 
