@@ -195,70 +195,80 @@ Method     :  POST
 */
 app.post("/books/new", async (req, res) => {
   const newBook = req.body.newBook; // const {newBook} = req.body;
+  const getBook = await BookModel.find({ ISBN: newBook.ISBN });
   const getAuthor = await AuthorModel.find();
   const getPublication = await PublicationModel.find();
-  //updating authors database
-  if (newBook.authors.length) {
-    let authorNotFound = [];
-    const authorIds = getAuthor.map((author) => parseInt(author["authorID"]));
-    let hasAllAuthors = true;
-    for (let i = 0; i < newBook.authors.length; i++) {
-      if (authorIds.indexOf(newBook.authors[i]) === -1) {
-        authorNotFound.push(newBook.authors[i]);
-        hasAllAuthors = false;
+
+  if (!getBook.length) {
+    //updating authors database
+    if (newBook.authors.length) {
+      let authorNotFound = [];
+      const authorIds = getAuthor.map((author) => parseInt(author["authorID"]));
+      let hasAllAuthors = true;
+      for (let i = 0; i < newBook.authors.length; i++) {
+        if (authorIds.indexOf(newBook.authors[i]) === -1) {
+          authorNotFound.push(newBook.authors[i]);
+          hasAllAuthors = false;
+        }
+      }
+      if (hasAllAuthors) {
+        getAuthor.forEach(async(author) => {
+          if (newBook.authors.includes(parseInt(author.authorID))) {
+            if (author.books.includes(newBook.ISBN) === false) {
+              //for duplicacy of elements condition
+              author.books.push(newBook.ISBN);
+              // author.books = updateAuthor;
+              await author.save();
+            }
+          }
+
+        });
+      } else {
+        return res.json({
+          error: `author with id(s) ${authorNotFound} does not exist in the database.`,
+        });
       }
     }
-    if (hasAllAuthors) {
-      getAuthor.forEach((author) => {
-        if (newBook.authors.includes(parseInt(author.authorID))) {
-          if (author.books.includes(newBook.ISBN) === false) {
-            //for duplicacy of elements condition
-            author.books.push(newBook.ISBN);
-          }
+    //updating publication database
+    if (newBook.publications.length) {
+      let publicationNotFound = [];
+      const pubIds = getPublication.map((publication) =>
+        parseInt(publication["pubID"])
+      );
+      let hasAllPublication = true;
+      for (let i = 0; i < newBook.publications.length; i++) {
+        if (pubIds.indexOf(newBook.publications[i]) === -1) {
+          publicationNotFound.push(newBook.publications[i]);
+          hasAllPublication = false;
         }
-      });
-    } else {
-      return res.json({
-        error: `author with id(s) ${authorNotFound} does not exist in the database.`,
-      });
-    }
-    await getAuthor.save();
-  }
-  //updating publication database
-  if (newBook.publications.length) {
-    let publicationNotFound = [];
-    const pubIds = getPublication.map((publication) =>
-      parseInt(publication["pubID"])
-    );
-    let hasAllPublication = true;
-    for (let i = 0; i < newBook.publications.length; i++) {
-      if (pubIds.indexOf(newBook.publications[i]) === -1) {
-        publicationNotFound.push(newBook.publications[i]);
-        hasAllPublication = false;
+      }
+      if (hasAllPublication) {
+        getPublication.forEach(async(publication) => {
+          if (newBook.publications.includes(parseInt(publication.pubID))) {
+            if (publication.books.includes(newBook.ISBN) === false) {
+              publication.books.push(newBook.ISBN);
+            }
+          }
+          await publication.save();
+        });
+      } else {
+        return res.json({
+          error: `publication with id(s) ${publicationNotFound} does not exist in the database.`,
+        });
       }
     }
-    if (hasAllPublication) {
-      getPublication.forEach((publication) => {
-        if (newBook.publications.includes(parseInt(publication.pubID))) {
-          if (publication.books.includes(newBook.ISBN) === false) {
-            publication.books.push(newBook.ISBN);
-          }
-        }
-      });
-    } else {
-      return res.json({
-        error: `publication with id(s) ${publicationNotFound} does not exist in the database.`,
-      });
-    }
-    await getPublication.save();
+    BookModel.create(newBook); // BookModel does not return anything
+    return res.json({
+      message: "book was added!",
+      book: newBook,
+      authors: getAuthor,
+      publications: getPublication,
+    });
+  } else {
+    return res.json({
+      error: `book with id ${newBook.ISBN} already exist in the database.`,
+    });
   }
-  BookModel.create(newBook); // BookModel does not return anything
-  return res.json({
-    message: "book was added!",
-    book: newBook,
-    authors: getAuthor,
-    publications: getPublication,
-  });
 });
 
 /*
@@ -269,9 +279,49 @@ Parameters :  NONE
 Method     :  POST
 */
 app.post("/author/new", async (req, res) => {
-  const newAuthor = req.body.newAuthor; //body.<keyvalue>
-  AuthorModel.create(newAuthor);
-  return res.json({ message: "author was added!" });
+  const newAuthor = req.body.newAuthor;
+  const getAuthor = await AuthorModel.find({ authorID: newAuthor.authorID });
+  const getBook = await BookModel.find();
+
+  if (!getAuthor.length) {
+    //updating books database
+    if (newAuthor.books.length) {
+      let bookNotFound = [];
+      const bookIds = getBook.map((book) => book["ISBN"]);
+      let hasAllBooks = true;
+      for (let i = 0; i < newAuthor.books.length; i++) {
+        if (bookIds.indexOf(newAuthor.books[i]) === -1) {
+          bookNotFound.push(newAuthor.books[i]);
+          hasAllBooks = false;
+        }
+      }
+      if (hasAllBooks) {
+        getBook.forEach(async(book) => {
+          if (newAuthor.books.includes(book.ISBN)) {
+            if (book.authors.includes(newAuthor.authorID) === false) {
+              book.authors.push(newAuthor.authorID);
+            }
+          }
+          await book.save();
+        });
+      } else {
+        return res.json({
+          error: `book with id(s) ${bookNotFound} does not exist in the database.`,
+        });
+      }
+    }
+
+    AuthorModel.create(newAuthor); 
+    return res.json({
+      message: "author was added!",
+      authors: newAuthor,
+      book: getBook,
+    });
+  } else {
+    return res.json({
+      error: `author with id ${newAuthor.authorID} already exist in the database.`,
+    });
+  }
 });
 
 /*
@@ -282,11 +332,49 @@ Parameters :  NONE
 Method     :  POST
 */
 app.post("/publication/new", async (req, res) => {
-  const newPublication = req.body.newPublication; //body.<keyvalue>
-  PublicationModel.create(newPublication);
-  return res.json({
-    message: "publication was added!",
-  });
+  const newPublication = req.body.newPublication;
+  const getPublication = await PublicationModel.find({ pubID: newPublication.pubID });
+  const getBook = await BookModel.find();
+
+  if (!getPublication.length) {
+    //updating books database
+    if (newPublication.books.length) {
+      let bookNotFound = [];
+      const bookIds = getBook.map((book) => book["ISBN"]);
+      let hasAllBooks = true;
+      for (let i = 0; i < newPublication.books.length; i++) {
+        if (bookIds.indexOf(newPublication.books[i]) === -1) {
+          bookNotFound.push(newPublication.books[i]);
+          hasAllBooks = false;
+        }
+      }
+      if (hasAllBooks) {
+        getBook.forEach(async(book) => {
+          if (newPublication.books.includes(book.ISBN)) {
+            if (book.publications.includes(newPublication.pubID) === false) {
+              book.publications.push(newPublication.pubID);
+            }
+          }
+          await book.save();
+        });
+      } else {
+        return res.json({
+          error: `book with id(s) ${bookNotFound} does not exist in the database.`,
+        });
+      }
+    }
+
+    PublicationModel.create(newPublication); 
+    return res.json({
+      message: "Publication was added!",
+      publications: newPublication,
+      book: getBook,
+    });
+  } else {
+    return res.json({
+      error: `Publication with id ${newPublication.pubID} already exist in the database.`,
+    });
+  }
 });
 
 /*
@@ -633,4 +721,4 @@ app.delete("/publication/delete/book/:isbn/:pubID", async (req, res) => {
 });
 
 //port
-app.listen(5000, () => console.log("Server running!!"));
+app.listen(8000, () => console.log("Server running!!"));
