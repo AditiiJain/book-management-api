@@ -721,4 +721,5 @@ app.delete("/publication/delete/book/:isbn/:pubID", async (req, res) => {
 });
 
 //port
-app.listen(8000, () => console.log("Server running!!"));
+const port = process.env.PORT || 8000;
+app.listen(port, () => console.log("Server running!!"));
