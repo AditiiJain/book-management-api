@@ -25,16 +25,16 @@ We need an API
 
 
 #### POST
-| Task       | endpoint          |
-| ------------- |:-------------| 
-| New book      | /books/new | 
+| Task       | endpoint          |Request Body|
+| ------------- |:-------------| -------------| 
+| New book      | /books/new |"newBook": { "ISBN": "exampleID", "title": "example", authors": [], "language": "en", "pubDate": "2021-07-08", "numOfPages": 500, "category":["web developement", "programming","many more"],publications": []}|
 
 
 #### PUT
-| Task       | endpoint          |
-| ------------- |:-------------| 
-|to update book title     | /books/update/:isbn | 
-|to update/add new author|/books/author/update/:isbn|
+| Task       | endpoint          | Request Body
+| ------------- |:-------------| ------------- |
+|to update book title     | /books/update/:isbn |"bookTitle": "example" |
+|to update/add new author|/books/author/update/:isbn| "authorID":"123"|
  
 
 #### DELETE
@@ -54,13 +54,13 @@ We need an API
 |to get a list of authors based on a book|/authors/bookID/:bookID|
 
 #### POST
-| Task       | endpoint          |
-| ------------- |:-------------| 
-| New author     | /author/new | 
+| Task       | endpoint          | Request Body |
+| ------------- |:-------------| ------------- |
+| New author     | /author/new | "newAuthor": {"authorName": "example", "authorID": "372","books": [] } |
 #### PUT 
-| Task       | endpoint          |
-| ------------- |:-------------| 
-|to update author name    | /authors/update/:id | 
+| Task       | endpoint          |  Request Body|
+| ------------- |:-------------| -------------|
+|to update author name    | /authors/update/:id | "authorName":"example"|
 
 
 #### DELETE
@@ -78,14 +78,14 @@ We need and API
 |to get a list of publications based on a book|/publications/bookID/:isbn|
 
 #### POST
-| Task       | endpoint          |
-| ------------- |:-------------| 
-| add new publication     | /publication/new | 
+| Task       | endpoint          | Request Body|
+| ------------- |:-------------| -------------| 
+| add new publication     | /publication/new | "newPublication": { "pubID": "1", "pubName": "example", "books": [] }|
 #### PUT
-| Task       | endpoint          |
-| ------------- |:-------------| 
-|update publication name   | /publications/update/:id | 
-|update/add new book to a publication    | /publications/update/book/:isbn | 
+| Task       | endpoint          | Request Body |
+| ------------- |:-------------| ------------- |
+|update publication name   | /publications/update/:id | "pubName": "example"|
+|update/add new book to a publication    | /publications/update/book/:isbn | "pubID" : "123"|
 
 #### DELETE
 | Task       | endpoint          |
